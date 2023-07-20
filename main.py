@@ -7,6 +7,7 @@ import pathlib
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
+from tensorflow.contrib import lite
 
 # classes in the dataset
 """ fruit_data/
@@ -18,12 +19,11 @@ from tensorflow.keras.models import Sequential
 
 # importing the data into the local
 
-dataset_url = "/home/ltabari/Desktop/FInal year/project trials/one/dataset/fruit_data/"
+dataset_url = "/home/ltabari/Desktop/FInal year/project trials/Final Project/dataset/fruit_data/"
 data_dir = pathlib.Path(dataset_url)
 
 
-
-banana = list(data_dir.glob('banana/*'))
+banana = list(data_dir.glob('Ripe_banana/*'))
 
 
 # Creating parameters for loader
@@ -50,7 +50,7 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
   image_size=(img_height, img_width),
   batch_size=batch_size)
 
-# getting the data cless names attributes 
+# getting the data class names attributes 
 class_names = train_ds.class_names
 
 # configuring dataset for performance 
@@ -121,23 +121,38 @@ val_loss = history.history['val_loss']
 
 epochs_range = range(epochs)
 
-plt.figure(figsize=(8, 8))
-plt.subplot(1, 2, 1)
-plt.plot(epochs_range, acc, label='Training Accuracy')
-plt.plot(epochs_range, val_acc, label='Validation Accuracy')
-plt.legend(loc='lower right')
-plt.title('Training and Validation Accuracy')
+# plt.figure(figsize=(8, 8))
+# plt.subplot(1, 2, 1)
+# plt.plot(epochs_range, acc, label='Training Accuracy')
+# plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+# plt.legend(loc='lower right')
+# plt.title('Training and Validation Accuracy')
 
-plt.subplot(1, 2, 2)
-plt.plot(epochs_range, loss, label='Training Loss')
-plt.plot(epochs_range, val_loss, label='Validation Loss')
-plt.legend(loc='upper right')
-plt.title('Training and Validation Loss')
-plt.show()
+# plt.subplot(1, 2, 2)
+# plt.plot(epochs_range, loss, label='Training Loss')
+# plt.plot(epochs_range, val_loss, label='Validation Loss')
+# plt.legend(loc='upper right')
+# plt.title('Training and Validation Loss')
+# plt.show()
+
+#saving my model
+saved_model_dir = '/home/ltabari/Desktop/FInal year/project trials/Final Project/'
+tf.saved_model.save(model, saved_model_dir)
+
+
+# Convert the model to TensorFlow Lite format
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+tflite_model = converter.convert()
+
+# Save the converted model to a file
+output_tflite_model = '/home/ltabari/Desktop/FInal year/project trials/Final Project/fruit_model.tflite'
+with open(output_tflite_model, 'wb') as f:
+    f.write(tflite_model)
+
 
 
 # testing models
-test_image = "/home/ltabari/Desktop/FInal year/project trials/one/dataset/fruit_test_data/wrong/1.jpeg"
+test_image = "/home/ltabari/Desktop/FInal year/project trials/one/dataset/fruit_test_data/banana/rot.webp"
 t_image = test_image
 
 img = tf.keras.utils.load_img(
