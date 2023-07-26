@@ -7,7 +7,7 @@ import pathlib
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
-from tensorflow.contrib import lite
+# from tensorflow.contrib import lite
 
 # classes in the dataset
 """ fruit_data/
@@ -139,6 +139,7 @@ epochs_range = range(epochs)
 saved_model_dir = '/home/ltabari/Desktop/FInal year/project trials/Final Project/'
 tf.saved_model.save(model, saved_model_dir)
 
+model.save('/home/ltabari/Desktop/FInal year/project trials/Final Project//model.h5')
 
 # Convert the model to TensorFlow Lite format
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
